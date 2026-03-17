@@ -1,6 +1,6 @@
 <h1>ExpNo 5 : Implement Simple Hill Climbing Algorithm</h1> 
-<h3>Name: upendra r            </h3>
-<h3>Register Number:  212224060290           </h3>
+<h3>Name: upendra r </h3>
+<h3>Register Number: 212224060290 </h3>
 <H3>Aim:</H3>
 <p>Implement Simple Hill Climbing Algorithm and Generate a String by Mutating a Single Character at each iteration </p>
 <h2> Theory: </h2>
@@ -38,96 +38,55 @@ Feedback is provided in terms of heuristic function
 <h3>Step-4:</h3>
 <p> Lopp Step -2 and Step-3  until we achieve the score to be Zero to achieve Global Minima.</p>
 
+<h1>Program:</h1>
+
 ```
 import random
 import string
 
+def generate_random_solution(answer):
+    l = len(answer)
+    return [random.choice(string.printable) for _ in range(l)]
 
-def hamming_distance(a: str, b: str) -> int:
-    if len(a) != len(b):
-        raise ValueError("Strings must have equal length")
-    return sum(x != y for x, y in zip(a, b))
+def evaluate(solution, answer):
+    print("Current solution:", "".join(solution))
+    target = list(answer)
+    diff = 0
+    for i in range(len(target)):
+        s = solution[i]
+        t = target[i]
+        diff += abs(ord(s) - ord(t))
+    return diff
 
+def mutate_solution(solution):
+    ind = random.randint(0, len(solution) - 1)
+    solution[ind] = random.choice(string.printable)
+    return solution
 
-def random_string(n: int, alphabet: str) -> str:
-    return "".join(random.choice(alphabet) for _ in range(n))
+def SimpleHillClimbing():
+    answer = "Artificial Intelligence"
+    best = generate_random_solution(answer)
+    best_score = evaluate(best, answer)
+    max_iterations = 1000
+    iterations = 0
+    while True:
+        print("Score:", best_score, "Solution:", "".join(best))
+        if best_score == 0:
+            break
+        if iterations >= max_iterations:
+            print("Max iterations reached.")
+            break
+        new_solution = mutate_solution(list(best))
+        score = evaluate(new_solution, answer)
+        if score < best_score:
+            best = new_solution
+            best_score = score
+        iterations += 1
 
-def mutate_one_char(s: str, alphabet: str) -> str:
-    i = random.randrange(len(s))
-    new_c = random.choice(alphabet)
-    while new_c == s[i]:
-        new_c = random.choice(alphabet)
-    return s[:i] + new_c + s[i+1:]
+SimpleHillClimbing()
 
+```
 
-def hill_climb_target(
-    target: str,
-    alphabet: str = string.ascii_letters + string.digits + " .,;:!?'\"()-",
-    max_iters: int = 200000,
-    patience: int = 5000,
-):
-    current = random_string(len(target), alphabet)
-    current_score = hamming_distance(current, target)
-
-    best = current
-    best_score = current_score
-    no_improve = 0
-
-    print(f"Score: {current_score} Solution : {current}")
-
-    for it in range(1, max_iters + 1):
-        neighbor = mutate_one_char(current, alphabet)
-        score = hamming_distance(neighbor, target)
-
-        # Accept only strict improvements
-        if score < current_score:
-            current, current_score = neighbor, score
-            no_improve = 0
-            if current_score < best_score:
-                best, best_score = current, current_score
-            print(f"Score: {current_score} Solution : {current}")
-        else:
-            no_improve += 1
-
-        # Goal check
-        if current_score == 0:
-            return {
-                "solution": current,
-                "distance": 0,
-                "iterations": it,
-                "converged": True,
-                "reason": "Reached global minimum (zero distance).",
-            }
-
-        # Stop if stuck without improvement
-        if no_improve >= patience:
-            return {
-                "solution": best,
-                "distance": best_score,
-                "iterations": it,
-                "converged": best_score == 0,
-                "reason": f"No improvement for {patience} consecutive mutations.",
-            }
-
-    return {
-        "solution": best,
-        "distance": best_score,
-        "iterations": max_iters,
-        "converged": best_score == 0,
-        "reason": "Max iterations reached.",
-    }
-
-if __name__ == "__main__":
-    target = "Artificial Intelligence"
-    result = hill_climb_target(
-        target,
-        alphabet=string.ascii_letters + string.digits + " .,;:!?'\"()-",
-        max_iters=300000,
-        patience=10000,
-    )
-    print(result)
-
- ```
 
 <hr>
 <h2>Sample Input and Output</h2>
@@ -150,6 +109,3 @@ Score: 1  Solution :  Artificial Intelligencf<br>
 Score: 1  Solution :  Artificial Intelligencf<br>
 Score: 1  Solution :  Artificial Intelligencf<br>
 Score: 0  Solution :  Artificial Intelligence<br>
-
-<H3>Result:</H3>
-<p>Therefore, Simple Hill Climbing Algorithm is implemented and a String by Mutating a Single Character at each iteration is generated.</p>
